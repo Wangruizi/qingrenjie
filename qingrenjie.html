@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情人节快乐</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+        }
+        /* 删除或注释掉原来的 .heart 相关样式 */
+        /* .heart {
+            font-size: 100px;
+            color: #e60000;
+            margin-bottom: 10px;
+            animation: heartbeat 1s infinite alternate;
+        } */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        .card-wrapper {
+            perspective: 2000px;
+            width: 400px;
+            height: 320px; /* 调整整体高度 */
+            margin: 50px auto 30px;
+            position: relative;
+        }
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+        .envelope-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f5d6e6, #ffb6c1);
+            position: absolute;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .envelope-flap {
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 160px solid #ffb6c1; /* 调整翻盖高度 */
+            position: absolute;
+            top: -20px; /* 调整翻盖位置 */
+            left: 0;
+            transform-origin: top;
+            transition: transform 0.5s ease;
+            z-index: 3;
+        }
+        .card {
+            width: 380px;
+            height: 280px; /* 调整卡片高度 */
+            background: white;
+            position: absolute;
+            left: 10px;
+            top: 20px; /* 调整卡片位置 */
+            transition: all 0.5s ease;
+            transform-origin: center bottom;
+            z-index: 2;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .envelope-decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://i.pinimg.com/originals/a6/93/8d/a6938d440bd6ecdb65e54e8dfe9ff080.jpg'); /* 使用玫瑰图片 */
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            top: 45%; /* 调整装饰位置 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            opacity: 1; /* 保持装饰始终可见 */
+        }
+        .envelope:hover .envelope-flap {
+            transform: rotateX(180deg);
+        }
+        .envelope:hover .card {
+            transform: translateY(-140px); /* 调整卡片上移距离 */
+        }
+        .front, .back {
+            padding: 25px;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around; /* 更改为空间均匀分布 */
+            align-items: center;
+            opacity: 0; /* 初始状态设置为透明 */
+            transition: opacity 0.5s ease; /* 添加过渡效果 */
+        }
+        .envelope:hover .front,
+        .envelope:hover .back {
+            opacity: 1;
+        }
+        .front {
+            background: linear-gradient(135deg, #fff5f8, #ffe4e1);
+            color: #ff4081;
+        }
+        .back {
+            background: linear-gradient(135deg, #ffe4e1, #fff5f8);
+            color: #ff4081;
+        }
+        h1 {
+            color: #ff4081;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 10px 0;
+            font-size: 24px;
+            color: #ff4081;
+        }
+        .message {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .rose {
+            width: 100px; /* 调小玫瑰尺寸 */
+            height: 100px;
+            margin: 5px auto;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4H1_TRQaC3V2V6uAGvWeupnemg3wO9bOAPA&s');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 1; /* 保持玫瑰图片始终可见 */
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #888;
+        }
+
+        /* 修改相册样式，确保所有图片大小一致 */
+        .gallery {
+            width: 400px;
+            height: 250px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: absolute;
+            right: -450px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: #f8f8f8; /* 更改背景色为更柔和的颜色 */
+        }
+
+        .gallery .album {
+            display: flex;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); /* 更改过渡动画 */
+            width: max-content; /* 新增 */
+        }
+
+        .gallery img {
+            width: 400px;
+            height: 250px;
+            object-fit: contain; /* 改为 contain */
+            border-radius: 15px;
+            opacity: 0;  /* 初始状态设为完全透明 */
+            transition: opacity 0.8s ease, transform 0.8s ease; /* 添加transform过渡 */
+            background: transparent; /* 移除背景色 */
+            padding: 5px; /* 减小内边距 */
+            box-sizing: border-box;
+            flex: 0 0 400px; /* 新增 */
+            transform: scale(0.95); /* 初始稍微缩小 */
+        }
+
+        .gallery img.active {
+            opacity: 1;
+            transform: scale(1); /* 激活状态恢复原始大小 */
+        }
+
+        /* 添加渐变遮罩效果 */
+        .gallery::before,
+        .gallery::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .gallery::before {
+            left: 0;
+            background: linear-gradient(to right, #f8f8f8, transparent);
+        }
+
+        .gallery::after {
+            right: 0;
+            background: linear-gradient(to left, #f8f8f8, transparent);
+        }
+
+        /* 添加导航按钮样式 */
+        .gallery-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .nav-dot {
+            width: 6px;  /* 调小圆点尺寸 */
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-dot.active {
+            background: #ff4081;
+            transform: scale(1.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .flower {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            background-image: url('https://i.pinimg.com/originals/a6/93/8d/a6938d440bd6ecdb65e54e8dfe9ff080.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            animation: float 1s infinite alternate;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        /* 添加爱心动画样式 */
+        .floating-heart {
+            position: fixed;
+            color: rgba(255, 64, 129, 0.2); /* 降低不透明度 */
+            animation: floatHeart 4s ease-in-out infinite;
+            z-index: -1; /* 确保在最底层 */
+            pointer-events: none;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translate(var(--moveX), var(--moveY)) scale(1.1);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(var(--moveX), calc(var(--moveY) - 100px)) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="flower"></div>
+        <h1>老婆情人节快乐！</h1>
+        <div class="card-wrapper">
+            <div class="envelope">
+                <div class="envelope-body"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-decoration"></div>
+                <div class="card" id="loveCard">
+                    <div class="front">
+                        <div class="rose"></div>
+                        <h2>豆宝，我爱你！</h2>
+                        <p class="message">细数每个有你早安晚安的日子，都是最好的情人节。余生漫漫，想和你把朝暮写成诗。</p>
+                    </div>
+                    <div class="back">
+                        <h2>你是我的一切！</h2>
+                        <p class="message">愿我们的爱永远甜蜜如初，永不褪色。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>祝我们情人节快乐！别人用玫瑰说爱，我想用往后每个清晨的豆浆油条告诉你:</p>
+            <p>你是我最笃定的选择。</p>
+        </div>
+
+        <!-- 修改相册部分的 HTML -->
+        <div class="gallery" id="gallery">
+            <div class="album" id="album">
+                <img src="images/1.jpg" alt="照片1" class="active">
+                <img src="images/2.jpg" alt="照片2">
+                <img src="images/3.jpg" alt="照片3">
+                <img src="images/4.jpg" alt="照片4">
+                <img src="images/5.png" alt="照片5">
+                <img src="images/6.jpg" alt="照片6">
+            </div>
+            <div class="gallery-nav" id="galleryNav"></div>
+        </div>
+    </div>
+
+    <script>
+        // 动态相册翻页
+        let currentIndex = 0;
+        const album = document.getElementById('album');
+        const images = album.getElementsByTagName('img');
+        const totalImages = images.length;
+        let autoPlayInterval;
+
+        function updateActiveStates() {
+            [...images].forEach((img, index) => {
+                img.classList.toggle('active', index === currentIndex);
+            });
+            
+            [...galleryNav.children].forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function goToImage(index) {
+            currentIndex = index;
+            const offset = currentIndex * 400;
+            album.style.transform = `translateX(-${offset}px)`;
+            updateActiveStates();
+        }
+
+        function nextImage() {
+            goToImage((currentIndex + 1) % totalImages);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay(); // 清除可能存在的旧定时器
+            autoPlayInterval = setInterval(nextImage, 3000); // 每3秒切换一次
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // 创建导航点
+        const galleryNav = document.getElementById('galleryNav');
+        for (let i = 0; i < totalImages; i++) {
+            const dot = document.createElement('div');
+            dot.className = `nav-dot ${i === 0 ? 'active' : ''}`;
+            dot.onclick = () => {
+                goToImage(i);
+                startAutoPlay(); // 点击后重新开始自动播放
+            };
+            galleryNav.appendChild(dot);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateActiveStates();
+            startAutoPlay();
+        });
+
+        // 鼠标悬停控制
+        gallery.addEventListener('mouseenter', stopAutoPlay);
+        gallery.addEventListener('mouseleave', startAutoPlay);
+
+        // 触摸事件支持
+        let touchStartX = 0;
+        gallery.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            stopAutoPlay();
+        }, false);
+
+        gallery.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                goToImage((currentIndex + 1) % totalImages);
+            } else if (touchEndX - touchStartX > 50) {
+                goToImage((currentIndex - 1 + totalImages) % totalImages);
+            }
+            startAutoPlay();
+        }, false);
+
+        // 启动自动播放
+        startAutoPlay();
+
+        // 点击翻转卡片
+        const loveCard = document.getElementById('loveCard');
+        loveCard.addEventListener('click', () => {
+            loveCard.classList.toggle('open');
+        });
+
+        // 添加随机生成爱心的函数
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤';
+            
+            // 随机大小 (15-40px)
+            const size = Math.random() * 25 + 15;
+            heart.style.fontSize = `${size}px`;
+            
+            // 随机起始位置
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            heart.style.left = `${startX}px`;
+            heart.style.top = `${startY}px`;
+            
+            // 随机移动方向和距离
+            const moveX = (Math.random() - 0.5) * 200; // -100px 到 100px
+            const moveY = -Math.random() * 150 - 50; // -200px 到 -50px
+            heart.style.setProperty('--moveX', `${moveX}px`);
+            heart.style.setProperty('--moveY', `${moveY}px`);
+            
+            document.body.appendChild(heart);
+            
+            // 动画结束后删除元素
+            heart.addEventListener('animationend', () => {
+                document.body.removeChild(heart);
+            });
+        }
+
+        // 调整生成频率
+        setInterval(createHeart, 400); // 改为 400ms 生成一次
+
+        // 初始生成更多爱心
+        for(let i = 0; i < 15; i++) {
+            setTimeout(createHeart, Math.random() * 2000);
+        }
+    </script>
+
+</body>
+</html>
